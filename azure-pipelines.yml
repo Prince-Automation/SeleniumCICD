@@ -36,10 +36,10 @@ steps:
     testRunTitle: 'TestNG Tests'
     failTaskOnFailedTests: true
 
-schedules:
-- cron: "0 0 * * *"  # Runs every day at midnight
-  displayName: Daily midnight build
-  branches:
-    include:
-    - main
-  always: true
+# schedules:
+# - cron: "0 0 * * *"  # Runs every day at midnight
+#   displayName: Daily midnight build
+#   branches:
+#     include:
+#     - main
+#   always: true
