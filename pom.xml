@@ -71,13 +71,6 @@
     <scope>test</scope>
 </dependency>
 
-<!-- Selenium DevTools for Chrome 138 -->
-<dependency>
-    <groupId>org.seleniumhq.selenium</groupId>
-    <artifactId>selenium-devtools-v138</artifactId>
-    <version>4.17.0</version>
-</dependency>
-
 <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
 <dependency>
     <groupId>com.fasterxml.jackson.core</groupId>
@@ -188,6 +181,17 @@
   <build>
     <pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
       <plugins>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>3.0.0-M6</version>
+        <configuration>
+          <suiteXmlFiles>
+            <suiteXmlFile>testSuites/testng.xml</suiteXmlFile>
+          </suiteXmlFiles>
+        </configuration>
+      </plugin>
         <!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
         <plugin>
           <artifactId>maven-clean-plugin</artifactId>
@@ -203,14 +207,8 @@
           <version>3.8.0</version>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.0.0-M6</version>
-          <configuration>
-            <suiteXmlFiles>
-              <suiteXmlFile>testSuites/testng.xml</suiteXmlFile>
-            </suiteXmlFiles>
-          </configuration>
+          <version>2.22.1</version>
         </plugin>
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
