@@ -11,6 +11,7 @@
 
   <name>SeleniumFrameworkDesign</name>
   <url>https://github.com/Prince-Automation/SeleniumCICD</url>
+  <description>Selenium Test Automation Framework with TestNG and ExtentReports</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -22,10 +23,13 @@
     <cucumber.version>7.15.0</cucumber.version>
     <jackson.version>2.15.3</jackson.version>
     <extentreports.version>5.1.0</extentreports.version>
+    <maven-surefire-plugin.version>3.1.2</maven-surefire-plugin.version>
+    <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+    <maven-surefire-report-plugin.version>3.1.2</maven-surefire-report-plugin.version>
   </properties>
 
   <dependencies>
-    <!-- Selenium -->
+    <!-- Selenium WebDriver -->
     <dependency>
       <groupId>org.seleniumhq.selenium</groupId>
       <artifactId>selenium-java</artifactId>
@@ -47,7 +51,7 @@
       <version>${webdrivermanager.version}</version>
     </dependency>
 
-    <!-- Cucumber -->
+    <!-- Cucumber BDD -->
     <dependency>
       <groupId>io.cucumber</groupId>
       <artifactId>cucumber-java</artifactId>
@@ -59,7 +63,7 @@
       <version>${cucumber.version}</version>
     </dependency>
 
-    <!-- Lombok -->
+    <!-- Lombok for reducing boilerplate code -->
     <dependency>
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
@@ -67,7 +71,7 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- Extent Reports -->
+    <!-- ExtentReports for beautiful test reporting -->
     <dependency>
       <groupId>com.aventstack</groupId>
       <artifactId>extentreports</artifactId>
@@ -81,11 +85,24 @@
       <version>${jackson.version}</version>
     </dependency>
     
-    <!-- Apache Commons IO -->
+    <!-- Apache Commons IO for file operations -->
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>2.13.0</version>
+    </dependency>
+    
+    <!-- Logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>2.0.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-simple</artifactId>
+      <version>2.0.7</version>
+      <scope>test</scope>
     </dependency>
 
 
@@ -180,18 +197,21 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>3.11.0</version>
+          <version>${maven-compiler-plugin.version}</version>
           <configuration>
             <source>${maven.compiler.source}</source>
             <target>${maven.compiler.target}</target>
             <encoding>${project.build.sourceEncoding}</encoding>
+            <compilerArgs>
+              <arg>-Xlint:all</arg>
+            </compilerArgs>
           </configuration>
         </plugin>
         
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-surefire-plugin</artifactId>
-          <version>3.1.2</version>
+          <version>${maven-surefire-plugin.version}</version>
           <configuration>
             <suiteXmlFiles>
               <suiteXmlFile>testSuites/testng.xml</suiteXmlFile>
@@ -199,14 +219,48 @@
             <systemPropertyVariables>
               <browser>${browser}</browser>
               <env>${env}</env>
+              <headless>${headless}</headless>
             </systemPropertyVariables>
+            <argLine>
+              -Xmx1024m
+              -XX:MaxPermSize=256m
+              -Djava.awt.headless=true
+            </argLine>
+            <trimStackTrace>false</trimStackTrace>
+            <useFile>false</useFile>
+            <parallel>methods</parallel>
+            <threadCount>${threads}</threadCount>
+            <properties>
+              <property>
+                <name>listener</name>
+                <value>rahulshettyacademy.TestComponents.Listeners</value>
+              </property>
+            </properties>
           </configuration>
         </plugin>
         
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-failsafe-plugin</artifactId>
-          <version>3.1.2</version>
+          <version>${maven-surefire-plugin.version}</version>
+          <executions>
+            <execution>
+              <goals>
+                <goal>integration-test</goal>
+                <goal>verify</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-report-plugin</artifactId>
+          <version>${maven-surefire-report-plugin.version}</version>
+          <configuration>
+            <showSuccess>true</showSuccess>
+            <outputDirectory>${project.build.directory}/surefire-reports</outputDirectory>
+          </configuration>
         </plugin>
         
         <plugin>
@@ -240,6 +294,11 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-report-plugin</artifactId>
       </plugin>
     </plugins>
         <plugin>
