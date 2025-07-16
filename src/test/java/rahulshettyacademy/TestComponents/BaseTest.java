@@ -62,19 +62,33 @@ public class BaseTest {
 
         if (browserName.contains("chrome")) {
             ChromeOptions options = new ChromeOptions();
-            options.addArguments("--no-sandbox");
-            options.addArguments("--disable-dev-shm-usage");
-            options.addArguments("--remote-allow-origins=*");
+            
+            // Set Chrome binary path from properties or use default
+            String chromeBinary = prop.getProperty("chrome.binary.path", "/usr/bin/google-chrome");
+            options.setBinary(chromeBinary);
+            
+            // Common Chrome options
+            options.addArguments(
+                "--no-sandbox",
+                "--disable-dev-shm-usage",
+                "--remote-allow-origins=*",
+                "--disable-gpu",
+                "--disable-software-rasterizer",
+                "--disable-extensions",
+                "--disable-infobars"
+            );
             
             // Create a unique temp directory for each test run
-            String tempDir = System.getProperty("java.io.tmpdir") + "chrome-" + UUID.randomUUID();
+            String tempDir = "/tmp/chrome-test-" + UUID.randomUUID();
             new File(tempDir).mkdirs();
             options.addArguments("--user-data-dir=" + tempDir);
             
-            if (browserName.contains("headless")) {
-                options.addArguments("--headless");
-                options.addArguments("--window-size=1920,1080");
-                options.addArguments("--disable-gpu");
+            // Handle headless mode
+            boolean isHeadless = Boolean.parseBoolean(prop.getProperty("chrome.headless", "true"));
+            if (browserName.contains("headless") || isHeadless) {
+                options.addArguments("--headless=new");
+                String windowSize = prop.getProperty("chrome.window.size", "1920,1080");
+                options.addArguments("--window-size=" + windowSize);
             }
             
             WebDriverManager.chromedriver().setup();
