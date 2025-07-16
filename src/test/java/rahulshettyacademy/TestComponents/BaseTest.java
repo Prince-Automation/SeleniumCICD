@@ -1,16 +1,14 @@
 package rahulshettyacademy.TestComponents;
 
-import org.testng.annotations.AfterMethod;
-
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
+import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.Dimension;
@@ -20,7 +18,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
@@ -49,24 +49,46 @@ public class BaseTest {
 		//prop.getProperty("browser");
 
 		if (browserName.contains("chrome")) {
+			WebDriverManager.chromedriver().setup();
 			ChromeOptions options = new ChromeOptions();
-			//driver = new ChromeDriver();
-			//WebDriverManager.chromedriver().setup();
-			if(browserName.contains("headless")){
-			options.addArguments("headless");
-			}		
+			
+			// Common Chrome options
+			options.addArguments(
+			    "--no-sandbox",
+			    "--disable-dev-shm-usage",
+			    "--disable-gpu",
+			    "--remote-allow-origins=*",
+			    "--user-data-dir=" + System.getProperty("java.io.tmpdir") + "/chrome-data-" + UUID.randomUUID()
+			);
+			
+			if (browserName.contains("headless")) {
+			    options.addArguments(
+			        "--headless=new",
+			        "--window-size=1440,900"
+			    );
+			}
+			
 			driver = new ChromeDriver(options);
-			driver.manage().window().setSize(new Dimension(1440,900));//full screen
+			
+			if (!browserName.contains("headless")) {
+			    driver.manage().window().setSize(new Dimension(1440, 900));
+			}
 
 		} else if (browserName.equalsIgnoreCase("firefox")) {
-			System.setProperty("webdriver.gecko.driver",
-					"/Users/rahulshetty//documents//geckodriver");
-			driver = new FirefoxDriver();
-			// Firefox
+		    WebDriverManager.firefoxdriver().setup();
+		    FirefoxOptions options = new FirefoxOptions();
+		    if (browserName.contains("headless")) {
+		        options.addArguments("-headless");
+		    }
+		    driver = new FirefoxDriver(options);
+		    
 		} else if (browserName.equalsIgnoreCase("edge")) {
-			// Edge
-			System.setProperty("webdriver.edge.driver", "edge.exe");
-			driver = new EdgeDriver();
+		    WebDriverManager.edgedriver().setup();
+		    EdgeOptions options = new EdgeOptions();
+		    if (browserName.contains("headless")) {
+		        options.addArguments("--headless=new");
+		    }
+		    driver = new EdgeDriver(options);
 		}
 
 		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
@@ -116,9 +138,14 @@ public class BaseTest {
 	}
 	
 	@AfterMethod(alwaysRun=true)
-	
 	public void tearDown()
 	{
-		driver.close();
+	    if (driver != null) {
+	        try {
+	            driver.quit();
+	        } catch (Exception e) {
+	            System.err.println("Error while closing the WebDriver: " + e.getMessage());
+	        }
+	    }
 	}
 }

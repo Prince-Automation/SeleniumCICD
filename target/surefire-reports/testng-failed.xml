@@ -1,31 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
-<suite parallel="tests" name="Failed suite [Suite]" guice-stage="DEVELOPMENT" verbose="0">
-  <listeners>
-    <listener class-name="rahulshettyacademy.TestComponents.Listeners"/>
-  </listeners>
-  <test thread-count="5" parallel="tests" name="Submit Order Test(failed)" verbose="0">
+<suite thread-count="1" name="Failed suite [Surefire suite]" verbose="0">
+  <test thread-count="1" name="Surefire test(failed)" verbose="0">
     <classes>
       <class name="rahulshettyacademy.tests.SubmitOrderTest">
         <methods>
           <include name="OrderHistoryTest"/>
           <include name="tearDown"/>
-          <include name="submitOrder"/>
+          <include name="submitOrder" invocation-numbers="0 1"/>
           <include name="launchApplication"/>
         </methods>
       </class> <!-- rahulshettyacademy.tests.SubmitOrderTest -->
-    </classes>
-  </test> <!-- Submit Order Test(failed) -->
-  <test thread-count="5" parallel="tests" name="Error Validations Test(failed)" verbose="0">
-    <classes>
-      <class name="rahulshettyacademy.tests.ErrorValidationsTest">
+      <class name="cucumber.TestNGTestRunner">
         <methods>
-          <include name="LoginErrorValidation"/>
-          <include name="tearDown"/>
-          <include name="ProductErrorValidation"/>
-          <include name="launchApplication"/>
+          <include name="runScenario" invocation-numbers="0"/>
+          <include name="tearDownClass"/>
+          <include name="setUpClass"/>
         </methods>
-      </class> <!-- rahulshettyacademy.tests.ErrorValidationsTest -->
+      </class> <!-- cucumber.TestNGTestRunner -->
     </classes>
-  </test> <!-- Error Validations Test(failed) -->
-</suite> <!-- Failed suite [Suite] -->
+  </test> <!-- Surefire test(failed) -->
+</suite> <!-- Failed suite [Surefire suite] -->
