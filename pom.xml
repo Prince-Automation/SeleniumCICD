@@ -175,6 +175,8 @@
   </profiles>
 
   <build>
+    <sourceDirectory>src/main/java</sourceDirectory>
+    <testSourceDirectory>src/test/java</testSourceDirectory>
     <plugins>
       <!-- Compiler Plugin -->
       <plugin>
@@ -185,6 +187,11 @@
           <source>${maven.compiler.source}</source>
           <target>${maven.compiler.target}</target>
           <encoding>${project.build.sourceEncoding}</encoding>
+          <compilerArgs>
+            <arg>-Xlint:all</arg>
+          </compilerArgs>
+          <showWarnings>true</showWarnings>
+          <showDeprecation>true</showDeprecation>
         </configuration>
       </plugin>
       
@@ -204,6 +211,14 @@
           <argLine>-Xmx1024m -XX:MaxPermSize=256m</argLine>
           <trimStackTrace>false</trimStackTrace>
           <useFile>false</useFile>
+          <includes>
+            <include>**/*Test*.java</include>
+            <include>**/Test*.java</include>
+            <include>**/*Tests.java</include>
+            <include>**/*TestCase.java</include>
+          </includes>
+          <testFailureIgnore>false</testFailureIgnore>
+          <failIfNoTests>true</failIfNoTests>
         </configuration>
       </plugin>
       
